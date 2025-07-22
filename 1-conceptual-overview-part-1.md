@@ -20,9 +20,9 @@ event_loop.run_forever()
 
 This is a regular 'ol Python function.
 ```python
-def hello_printer():
+def simple_print():
     print(
-        "Hi, I am a lowly, simple printer, though I have all I "
+        "Hi, I am simple_print(), a lowly, simple printer, though I have all I"
         "need in life -- fresh paper & a loving octopus-wife."
     )
 ```
