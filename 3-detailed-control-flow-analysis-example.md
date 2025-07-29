@@ -100,12 +100,12 @@ And, in much more detail:
 1. Control is now in **`program.triple`**
     * Control goes to the coroutine `triple` on line 2. It computes 3 times 5, then finishes and raises a StopIteration exception.
 1. Control is now in **`triple_task.step`**
-    * The StopIteration exception is caught so we go to line 7. The return value of the coroutine `main` is embedded in the `value` attribute of that exception. Future.set_result() saves the result, marks the task as done and adds the done-callbacks of `triple_task` to the event-loops' queue. The `step` method ends and returns control to the event-loop.
+    * The StopIteration exception is caught so we go to line 7. The return value of the coroutine `triple` is embedded in the `value` attribute of that exception. Future.set_result() saves the result, marks the task as done and adds the done-callbacks of `triple_task` to the event-loops' queue. The `step` method ends and returns control to the event-loop.
 1. Control is now in the **`event-loop`**
     * The event-loop cycles to the next task in its queue. The event-loop pops `main_task` and resumes it by calling `main_task.step()`.
 1. Control is now in **`main_task.step`**
     * We enter the try-block on line 4 then resume the coroutine `main` which will pick up again from where it yielded. Recall,
-    it yielded not in the coroutine, but in `main_task.__await__` on line 6.
+    it yielded not in the coroutine, but in `triple_task.__await__` on line 6.
 1. Control is now in **`triple_task.__await__`**
     * We evaluate the if-statement on line 8 which ensures that `triple_task` was completed. Then, it returns the `result` of `triple_task` which was saved earlier. Finally that `result`
     is returned to the caller (i.e. `... = await triple_task`).
