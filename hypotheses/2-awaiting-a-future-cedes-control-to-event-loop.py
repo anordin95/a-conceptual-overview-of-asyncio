@@ -11,6 +11,8 @@ async def main():
     
     future = asyncio.Future()
     asyncio.Task(auxiliary_func(), loop=loop)
+    # Note: cannot specify loop with create_task approach.
+    # asyncio.create_task(auxiliary_func())
     
     print(f"Awaiting future...")
     await future
