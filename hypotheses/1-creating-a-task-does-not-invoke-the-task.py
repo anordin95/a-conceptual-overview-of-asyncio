@@ -20,4 +20,8 @@ async def main():
     time.sleep(3)
     await task
 
-asyncio.run(main())
+# asyncio.run(main())
+
+loop = asyncio.new_event_loop()
+import ipdb; ipdb.set_trace()
+loop.run_forever()

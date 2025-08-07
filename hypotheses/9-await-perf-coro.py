@@ -1,8 +1,23 @@
 import time
 import asyncio
 
-async def coro5(x: int):
+async def coro10(x: int):
     return x + 1
+
+async def coro9(x: int):
+    return await coro10(x) + 1
+
+async def coro8(x: int):
+    return await coro9(x) + 1
+
+async def coro7(x: int):
+    return await coro8(x) + 1
+
+async def coro6(x: int):
+    return await coro7(x) + 1
+
+async def coro5(x: int):
+    return await coro6(x) + 1
 
 async def coro4(x: int):
     return await coro5(x) + 1
@@ -17,7 +32,7 @@ async def coro1(x: int):
     return await coro2(x) + 1
 
 async def main():
-    for _ in range(10_000):
+    for _ in range(5_000):
         output = await coro1(7)
     return output
 
