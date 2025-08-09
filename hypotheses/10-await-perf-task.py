@@ -32,7 +32,7 @@ async def coro1(x: int):
     return await asyncio.Task(coro2(x)) + 1
 
 async def main():
-    for _ in range(5_000):
+    for _ in range(10_000):
         output = await asyncio.Task(coro1(7))
     return output
 

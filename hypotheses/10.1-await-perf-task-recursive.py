@@ -8,7 +8,7 @@ async def coro(depth: int):
         return await asyncio.Task(coro(depth - 1))
 
 async def main():
-    for _ in range(5_000):
+    for _ in range(10_000):
         await asyncio.Task(coro(MAX_DEPTH))
 
 MAX_DEPTH = 30

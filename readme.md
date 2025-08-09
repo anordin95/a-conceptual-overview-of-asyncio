@@ -13,7 +13,8 @@ During my learning process, a few aspects particually drove my curiosity (read: 
 
 ## Sections
 
-The first two sections feature some examples but are generally focused on theory and explaining concepts. The next two sections are centered around examples, focused on further illustrating and reinforcing ideas practically. The final section compares multiprocessing, multithreading & asyncio; and offers some opinions on asyncio's design.
+The first two sections feature some examples but are generally focused on theory and explaining concepts. The next two sections are centered around examples, focused on further illustrating and reinforcing ideas practically. The final section compares multiprocessing, multithreading & asyncio and
+describes when you'd want each one.
 
 #### [A conceptual overview part 1: a mental model](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/1-conceptual-overview-part-1.md)
 
@@ -37,4 +38,4 @@ actually happening under the hood and how you could do something similar.
 
 #### [When to use asyncio & closing thoughts](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/5-conclusions.md)
 
-This section briefly describes and contrasts the three common approaches to concurrency and where each is most useful. Additionally I offer my thoughts on two aspects of asyncio's design that I think could be improved.
+This section briefly describes and contrasts the three common approaches to concurrency and where each is most useful. 
