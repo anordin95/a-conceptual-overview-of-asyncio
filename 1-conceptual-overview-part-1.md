@@ -290,8 +290,8 @@ You can play around with the programs in `hypotheses/9-await-perf-coro.py` and
 They measure the performance of each approach on a simple program many, many times. The programs recursively await a coroutine or task to a depth of 10.
 That means the average callstack depth is 5, which is arguably shallower than
 most real programs.
-The `await task` approach takes about 3 seconds for 10,000 runs or about 300 microseconds per run.
-The `await coroutine` approach takes about 7 milliseconds for 10,000 runs or about 0.7 microseconds per run. It's 430 times faster.
+The `await task` approach takes 3 seconds for 10,000 runs or 300 microseconds per run.
+In contrast, the `await coroutine` approach takes 0.7 microseconds per run; 430 times faster.
 I know these numbers all sound extremely small to us humans, but to computers
 they're a lot!
 This [page of common latency numbers](https://gist.github.com/jboner/2841832) in a computer is a helpful reference point.
