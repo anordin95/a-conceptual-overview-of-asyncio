@@ -305,7 +305,7 @@ This [page of common latency numbers](https://gist.github.com/jboner/2841832) fo
 
 ## Tying it together
 
-So far we've covered a lot! Let's recap and then see how these ideas all work together.
+So far we've covered a lot! Let's recap and see how these ideas all work together.
 The event loop orchestrates the whole show. You can basically think of it as a queue that runs jobs 
 one at a time in the order they're provided. 
 The jobs are calls to invoke/resume tasks.
@@ -317,5 +317,9 @@ I know that sounds minor and pedantic, but it matters for garbage collection.
 If you don't keep a reference to the task, there will be no references to the object, and the
 garbage collector (i.e. memory cleanup) may obliterate that object and reclaim those bytes.
 That's problematic if the event loop later tries to invoke the now non-existent object!
+
+At this point you've seen most of the key players in `asyncio`. 
+Keep reading to learn about how `asyncio` pauses & resumes coroutines and how to leverage 
+`asyncio.Future` to create your own operators.
 
 ### [Next: A conceptual overview part 2: the nuts & bolts](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/2-conceptual-overview-part-2.md)
