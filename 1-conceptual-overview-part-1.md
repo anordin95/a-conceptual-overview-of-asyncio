@@ -309,7 +309,7 @@ So far we've covered a lot! Let's recap and then see how these ideas all work to
 The event loop orchestrates the whole show. You can basically think of it as a queue that runs jobs 
 one at a time in the order they're provided. 
 The jobs are calls to invoke/resume tasks.
-Tasks are largely coroutines that are tied to an event loop.
+Tasks are basically coroutines tied to an event loop that can also store a list of callbacks.
 And coroutines are like regular Python functions that can be paused and resumed throughout their body.
 
 One classic gotcha is that the event loop does not store tasks in the queue, but callbacks which generally invoke tasks, though they can do other more general things too!
