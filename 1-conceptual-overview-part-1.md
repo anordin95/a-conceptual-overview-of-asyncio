@@ -183,6 +183,8 @@ await task
 
 Unfortunately, it actually does matter which type of object await is applied to. 
 
+### `await task`
+
 Awaiting a task will cede control from the current task or coroutine to
 the event loop.
 In the process of relinquishing control, a few important things happen.
@@ -217,6 +219,8 @@ loops to-do list to be resumed.
 This is a basic, yet reliable mental model.
 In practice, the control handoffs are slightly more involved, but not by much.
 In part 2, we'll walk through the details that make this possible.
+
+### `await coroutine`
 
 **Unlike tasks, await-ing a coroutine does not cede control!** Wrapping a coroutine in a task first, then await-ing that would cede control. The behavior of `await coroutine` is effectively the same as invoking a regular, synchronous Python function. Consider this program:
 
@@ -278,27 +282,29 @@ the `debug=True` flag for `asyncio.run`.
 Among other things, that will log any coroutines that monopolize 
 execution for 100ms or longer.
 
-This design of `await` intentionally trades off some conceptual clarity around usage for improved performance.
-Each time a task is awaited, control needs to be passed all the way up the
-call stack to the event loop. 
-And keep in mind, if many `await`'s are chained together, as is common in practice, each `await` must traverse the call stack each time.
-That might sound minor, but in a large program with many `await`'s and a deep
-callstack that overhead can add up to a meaningful performance drag.
+I believe this design of `await` intentionally trades off some conceptual clarity around usage for 
+improved performance.
+Each time a task is awaited, control needs to be passed all the way up the call stack to the event loop. 
+The event loop then needs to work through it's own logic to eventually invoke the task.
+The call stack has a non-negligible impact but from my experiments it's largely the event loop's 
+internal processing logic that's responsible for the slowdown.
+Granted, for larger, more realistic programs that likely have much deeper call stacks, that 
+answer may change. 
 
 You can play around with the programs in `hypotheses/9-await-perf-coro.py` and
-`hypotheses/10-await-perf-task.py`. 
-They measure the performance of each approach on a simple program many, many times. The programs recursively await a coroutine or task to a depth of 10.
-That means the average callstack depth is 5, which is arguably shallower than
-most real programs.
+`hypotheses/10-await-perf-task.py`.
+And the scaling tests in `hypotheses/sample-perf` which gave the insight regarding the relative importance of the call stack traversal
+versus event loop processing.
+The two aforementioned programs measure the performance of each approach many, many times. The programs recursively await a coroutine or task to a depth of 10.
+That means the average callstack depth is 5, which is arguably shallower than most real programs.
 The `await task` approach takes 3 seconds for 10,000 runs or 300 microseconds per run.
 In contrast, the `await coroutine` approach takes 0.7 microseconds per run; 430 times faster.
-I know these numbers all sound extremely small to us humans, but to computers
-they're a lot!
-This [page of common latency numbers](https://gist.github.com/jboner/2841832) in a computer is a helpful reference point.
+I know these numbers all sound miniscule to us humans, but to computers they're significant!
+This [page of common latency numbers](https://gist.github.com/jboner/2841832) for a computer is a helpful reference point.
 
 ## Tying it together
 
-So far you've covered a lot! Let's recap and then see how these ideas all work together.
+So far we've covered a lot! Let's recap and then see how these ideas all work together.
 The event loop orchestrates the whole show. You can basically think of it as a queue that runs jobs 
 one at a time in the order they're provided. 
 The jobs are calls to invoke/resume tasks.
