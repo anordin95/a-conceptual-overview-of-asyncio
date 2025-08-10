@@ -222,7 +222,8 @@ In part 2, we'll walk through the details that make this possible.
 
 ### `await coroutine`
 
-**Unlike tasks, await-ing a coroutine does not cede control!** Wrapping a coroutine in a task first, then await-ing that would cede control. The behavior of `await coroutine` is effectively the same as invoking a regular, synchronous Python function. Consider this program:
+**Unlike tasks, await-ing a coroutine does not cede control to the event loop!** 
+Wrapping a coroutine in a task first, then await-ing that would cede control. The behavior of `await coroutine` is effectively the same as invoking a regular, synchronous Python function. Consider this program:
 
 ```python
 import asyncio
@@ -248,7 +249,7 @@ The first statement in the coroutine `main()` creates `task_b` and schedules it 
 Then, `coro_a` is repeatedly created then awaited. Control never cedes to the event loop which is why we see the output of all five `coro_a`
 invocations before `task_b`'s output:
 
-```bash
+```
 I am coro_a(). Hi!
 I am coro_a(). Hi!
 I am coro_a(). Hi!
@@ -259,7 +260,7 @@ I am coro_b(). I sure hope no one hogs the event loop...
 
 Now, if instead of awaiting `coro_a` we awaited a Task which wrapped `coro_a`, like `await asyncio.create_task(coro_a)`, we'd see:
 
-```bash
+```
 I am coro_b(). I sure hope no one hogs the event loop...
 I am coro_a(). Hi!
 I am coro_a(). Hi!
