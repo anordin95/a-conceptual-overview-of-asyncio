@@ -271,7 +271,7 @@ I am coro_a(). Hi!
 
 The coroutine `main()` cedes control to the event loop with that new statement.
 The event loop then proceeds through its backlog of work, calling `task_b`
-and then the task which wraps `coro_a()` before resuming the coroutine
+and then the task which wraps `coro_a` before resuming the coroutine
 `main()`.
 
 This behavior of `await coroutine` can trip a lot of people up!
