@@ -380,6 +380,6 @@ And it's important to keep a reference to task objects until they're awaited.
 
 At this point you've seen most of the key players in `asyncio`. 
 Keep reading to learn about how `asyncio` pauses & resumes coroutines and how to leverage 
-`asyncio.Future` to create your own operators.
+`asyncio.Future` to create your own custom async operators.
 
 ### [Next: A conceptual overview part 2: the nuts & bolts](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/2-conceptual-overview-part-2.md)
