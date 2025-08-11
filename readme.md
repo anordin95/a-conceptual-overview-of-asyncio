@@ -36,6 +36,6 @@ A simple but thorough example showing how asyncio can offer an advantage over se
 any asyncio operators (besides the event-loop). It's all non-blocking sockets & custom awaitables that help you see what's
 actually happening under the hood and how you could do something similar.
 
-#### [When to use asyncio](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/5-conclusions.md)
+#### [When should you use asyncio?](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/5-conclusions.md)
 
 This section briefly describes and contrasts the three common approaches to concurrency and where each is most useful. 
