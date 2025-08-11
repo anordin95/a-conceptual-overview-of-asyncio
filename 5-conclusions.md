@@ -21,32 +21,6 @@ work-chunk and manages them via the event-loop's queue. I believe the marginal o
 
 There are some other benefits associated with using asyncio. One is clearer visibility into when and where interleaving occurs. The code chunk between two awaits is certainly synchronous. Another is simpler debugging, since it's easier to attach and follow a trace and reason about code execution. With threading, the interleaving is more of a black-box. One benefit of multithreading is not really having to worry about greedy threads hogging execution, something that could happen with asyncio where a greedy coroutine never awaits and effectively stalls the event-loop.
 
-## Opinions and suggestions on certain design choices
-
-I'm somewhat confused by a few of the design decisions in asyncio. If you do know or see a reason I'm missing for why they're beneficial, please let me know! I see two possible changes that could simplify people's experience working with asyncio. I feel much more strongly about the first one than the second.
-
-### 1. `await coroutine` should be disallowed or yield to the event-loop
-
-When you see an `await object` statement in some codebase, you need to know whether that object is a coroutine or a task/future to understand its impact. If object is a coroutine, an asynchronous wait is not actually going to occur and the event-loop cannot intercede. I think that makes skimming a codebase harder than it needs to be and obfuscates the meaning of the await keyword.
-
-The downside is there'd be no way to synchronously invoke a coroutine. Of course, there are already ways to synchronously invoke chunks of code: regular Python functions. I imagine the edge case where someone sometimes wants to invoke a coroutine synchronously in some places and in other places asynchronously is somewhat rare. My gut also says if an applications needs the same coroutine synchronous in some cases and asynchronous in others, there may be flaws in its broader usage of async that explain the problem. Nonetheless I think that problem could still be addressed in one of two ways: have a synchronous variant of the function or use coroutine.send(arg).
-
-To me, simplifying and clarifying await is easily worth that minor downside.
-
-### 2. The Task constructor should accept coroutine functions
-
-I think one common source of confusion for folks is coroutine functions versus coroutine objects. Building off of the first suggestion, if `await coroutine` is disallowed, there will be far fewer instances of needing to work with coroutine objects or even to have them around. Instead, let the Task constructor manage creation of them. This change would also mean the stylistic approach of asyncio could match multiprocessing and multithreading -- directly passing a callable-looking object to the Process, Thread, or Task constructor. Additionally, this would remove the red-herrings that look like function calls by mimicking their notation but are instead calls to create coroutine objects.
-
-```python
-async def do_work(x, y):
-    pass
-
-def thread_target(x, y):
-    pass
-
-def main():
-    t = threading.Thread(thread_target, args=(1, 2))
-    t = asyncio.Task(do_work, args=(3,4))
 ```
 
 ## Further reading
