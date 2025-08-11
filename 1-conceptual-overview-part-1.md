@@ -21,6 +21,7 @@ This process repeats indefinitely.
 If there are no more jobs pending execution, the event-loop is smart enough to
 rest and avoid needlessly wasting CPU cycles, and will come back when there's 
 more work to be done.
+In practice, the queue data structure is a tad more involved, but frankly not by much!
 
 Effective overall execution relies on tasks sharing well. 
 A greedy task could hog control and leave the other tasks to starve rendering 
@@ -303,6 +304,66 @@ In contrast, the `await coroutine` approach takes 0.7 microseconds per run; 430 
 I know these numbers all sound miniscule to us humans, but to computers they're significant!
 This [page of common latency numbers](https://gist.github.com/jboner/2841832) for a computer is a helpful reference point.
 
+## Event Loop Callbacks
+
+One classic gotcha is that the event loop does not store task objects (i.e. `asyncio.Task` instances) in its collection of jobs 
+or queue. 
+Instead, it stores callables (or "callbacks") which generally invoke tasks, though they can do other more general things too!
+I know that sounds minor and pedantic, but it matters for garbage collection.
+If you don't keep a reference to the task, there will be no references to the object, and the
+garbage collector (i.e. memory cleaner) may obliterate that object and reclaim those bytes.
+That's problematic if the event loop later tries to invoke the now non-existent object!
+
+In order to write code that triggers this bug, you largely need to forget to await the tasks you create.
+In the brief example below, one task is created without a reference and not immediately awaited, so it could
+be garbage collected at any time. The other task is created with a reference to it (i.e. `task = ...`), but is
+also not awaited within the scope of `main()`. If `main()` finishes before the event loop happens to 
+regain control and invoke `task`, the scope is cleaned up and the task object is liable to be nicked.
+
+```python
+async def main():
+    # The task is created, but no reference is made to it.
+    asyncio.create_task(coro_fn())
+    # A reference is made, but the task is never awaited in the scope of main().
+    task = asyncio.create_task(coro_fn())
+    ...
+```
+
+The most common way people accidentally trigger this bug is in for-loops. In the example below, it might look
+like we're keeping a reference to each task, but once the for loop is done we only have a reference to the 
+last task. 
+
+```python
+async def main():
+    for idx in range(5):
+        t = asyncio.create_task(coro_fn())
+```
+
+Instead, keep a reference to each created task:
+
+```python
+async def main():
+    tasks = []
+    for idx in range(5):
+        t = asyncio.create_task(coro_fn())
+        tasks.append(t)
+    
+    for task in tasks:
+        await task
+```
+
+Or immediately `await` each task. Though, if you `await` each task as it's created, the event loop can't
+switch between the various tasks (since they haven't been made yet!) when one is waiting for some external 
+event (file-read, server-request, etc.).
+So, the former approach with a list of tasks is recommended.
+
+```python
+async def main():
+    for idx in range(5):
+        await asyncio.create_task(coro_fn())
+```
+
+
 ## Tying it together
 
 So far we've covered a lot! Let's recap and see how these ideas all work together.
@@ -312,11 +373,8 @@ The jobs are calls to invoke/resume tasks.
 Tasks are basically coroutines tied to an event loop that can also store a list of callbacks.
 And coroutines are like regular Python functions that can be paused and resumed throughout their body.
 
-One classic gotcha is that the event loop does not store tasks in the queue, but callbacks which generally invoke tasks, though they can do other more general things too!
-I know that sounds minor and pedantic, but it matters for garbage collection.
-If you don't keep a reference to the task, there will be no references to the object, and the
-garbage collector (i.e. memory cleanup) may obliterate that object and reclaim those bytes.
-That's problematic if the event loop later tries to invoke the now non-existent object!
+And the two common gotchas. `await coroutine` does not cede control to the event loop. 
+And it's important to keep a reference to task objects until they're awaited.
 
 At this point you've seen most of the key players in `asyncio`. 
 Keep reading to learn about how `asyncio` pauses & resumes coroutines and how to leverage 
