@@ -19,11 +19,11 @@ describes when you'd want each one.
 #### [A conceptual overview part 1: a mental model](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/1-conceptual-overview-part-1.md)
 
 In part 1, we'll cover the main, high-level building blocks of asyncio: the event-loop, coroutine functions,
-coroutine objects, tasks & await. 
+coroutine objects, tasks & await. After this section, you should be able to comfortably and confidently use asyncio.
 
 #### [A conceptual overview part 2: the nuts & bolts](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/2-conceptual-overview-part-2.md)
 
-Part 2 goes into detail on the mechanisms asyncio uses to manage control flow. This is where the magic happens. You'll
+Part 2 goes into detail on the Python mechanisms asyncio uses to manage control flow. This is where the magic happens. You'll
 come away from this section knowing what await does behind the scenes and how to make your own asynchronous operators.
 
 #### [Analyzing an example programs control flow](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/3-detailed-control-flow-analysis-example.md)
@@ -36,6 +36,6 @@ A simple but thorough example showing how asyncio can offer an advantage over se
 any asyncio operators (besides the event-loop). It's all non-blocking sockets & custom awaitables that help you see what's
 actually happening under the hood and how you could do something similar.
 
-#### [When to use asyncio & closing thoughts](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/5-conclusions.md)
+#### [When to use asyncio](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/5-conclusions.md)
 
 This section briefly describes and contrasts the three common approaches to concurrency and where each is most useful. 
