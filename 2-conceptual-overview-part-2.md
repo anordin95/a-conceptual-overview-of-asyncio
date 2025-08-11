@@ -69,7 +69,7 @@ Futures may be also used directly i.e. not via tasks. Tasks mark themselves as d
 
 ## Homemade asyncio.sleep
 
-We’ll go through an example of how you could leverage a future to create your own variant of asynchronous sleep which mimics asyncio.sleep().
+We’ll go through an example of how you could leverage a future to create your own variant of asynchronous sleep which mimics the official asyncio.sleep().
 
 This snippet registers a few tasks with the event loop and then awaits a coroutine wrapped in a task: async_sleep(3). We want that task to finish only after three seconds have elapsed, but without preventing other tasks from running.
 
