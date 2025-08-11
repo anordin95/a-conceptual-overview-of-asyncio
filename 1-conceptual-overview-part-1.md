@@ -318,7 +318,7 @@ In order to write code that triggers this bug, you largely need to forget to awa
 In the brief example below, one task is created without a reference and not immediately awaited, so it could
 be garbage collected at any time. The other task is created with a reference to it (i.e. `task = ...`), but is
 also not awaited within the scope of `main()`. If `main()` finishes before the event loop happens to 
-regain control and invoke `task`, the scope is cleaned up and the task object is liable to be nicked.
+regain control and invoke `task`, the scope is exited and local variables, including the task object are liable to be nicked.
 
 ```python
 async def main():
@@ -343,11 +343,13 @@ Instead, keep a reference to each created task:
 
 ```python
 async def main():
+    # Create each task.
     tasks = []
     for idx in range(5):
         t = asyncio.create_task(coro_fn())
         tasks.append(t)
     
+    # Ensure each task finishes before exiting main().
     for task in tasks:
         await task
 ```
