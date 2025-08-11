@@ -58,7 +58,7 @@ The only way to yield (or effectively cede control) from a coroutine is to await
 
 ## Futures
 
-A future is an object meant to represent a computation or process's status and result. 
+A future (`asyncio.Future`) is an object meant to represent a computation or process's status and result. 
 The term is a nod to the idea of something still to come or not yet happened, and the object is a way to keep an eye on that something.
 
 A future has a few important attributes. One is its state which can be either pending, cancelled or done. Another is its result which is set when the state transitions to done. To be clear, a Future does not represent the actual computation to be done, like a coroutine does. Instead it represents the status and result of that computation, kind of like a status-light (red, yellow or green) or indicator. 
@@ -67,7 +67,7 @@ Task subclasses Future in order to gain these various capabilities. I said in th
 
 Futures may be also used directly i.e. not via tasks. Tasks mark themselves as done when their coroutine's complete. Futures are much more versatile and will be marked as done when you say so. In this way, they're the flexible interface for you to make your own conditions for waiting and resuming. Here's an example of how you could leverage Future to create your own variant of asynchronous sleep (i.e. asyncio.sleep).
 
-## homemade asyncio.sleep
+## Homemade asyncio.sleep
 
 We’ll go through an example of how you could leverage a future to create your own variant of asynchronous sleep which mimics asyncio.sleep().
 
