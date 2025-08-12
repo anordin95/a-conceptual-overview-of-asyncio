@@ -9,12 +9,12 @@ She's behind the scenes managing resources.
 Some power is explicitly granted to her, but a lot of her ability to get 
 things done comes from the respect & cooperation of her subordinates.
 
-In more technical terms, the event-loop contains a queue of tasks (think: "jobs", 
+In more technical terms, the event-loop contains a queue of jobs (think: "tasks", 
 "work-orders", "callbacks", etc.) to be run. 
 Some jobs are added directly by you, and some indirectly by asyncio. 
-The event-loop pops a task from the queue and invokes it (or gives it control),
+The event-loop pops a job from the queue and invokes it (or gives it control),
 similar to calling a function. 
-That callback then runs.
+That job then runs.
 Once it pauses or completes, it returns control to the event-loop.
 The event-loop then pops and invokes the next job in its queue. 
 This process repeats indefinitely. 
