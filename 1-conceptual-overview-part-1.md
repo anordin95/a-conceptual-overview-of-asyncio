@@ -373,7 +373,7 @@ The event loop orchestrates the whole show. You can basically think of it as a q
 one at a time in the order they're provided. 
 The jobs are calls to invoke/resume tasks.
 Tasks are basically coroutines tied to an event loop that can also store a list of callbacks.
-And coroutines are like regular Python functions that can be paused and resumed throughout their body.
+And coroutines are like regular Python functions that can be paused and resumed throughout their body (at `await`'s).
 
 And the two common gotchas. `await coroutine` does not cede control to the event loop. 
 And it's important to keep a reference to task objects until they're awaited.
