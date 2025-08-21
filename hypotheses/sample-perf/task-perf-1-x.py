@@ -10,13 +10,13 @@ async def main():
         
         output = await asyncio.Task(coro1(1))
         output = await asyncio.Task(coro1(2))
-        # output = await asyncio.Task(coro1(3))
-        # output = await asyncio.Task(coro1(4))
+        output = await asyncio.Task(coro1(3))
+        output = await asyncio.Task(coro1(4))
         
-        # output = await asyncio.Task(coro1(5))
-        # output = await asyncio.Task(coro1(6))
-        # output = await asyncio.Task(coro1(7))
-        # output = await asyncio.Task(coro1(8))
+        output = await asyncio.Task(coro1(5))
+        output = await asyncio.Task(coro1(6))
+        output = await asyncio.Task(coro1(7))
+        output = await asyncio.Task(coro1(8))
 
     return output
 
