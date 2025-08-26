@@ -306,8 +306,7 @@ This [page of common latency numbers](https://gist.github.com/jboner/2841832) fo
 
 ## Event Loop Callbacks
 
-One classic gotcha is that the event loop does not store task objects (i.e. `asyncio.Task` instances) in its collection of jobs 
-or queue. 
+One classic gotcha is that the event loop does not store task objects (i.e. `asyncio.Task` instances) in its queue (or "collection of jobs").
 Instead, it stores callables (or "callbacks") which generally invoke tasks, though they can do other more general things too!
 I know that sounds minor and pedantic, but it matters for garbage collection.
 If you don't keep a reference to the task, there will be no references to the object, and the
