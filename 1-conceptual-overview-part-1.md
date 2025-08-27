@@ -81,7 +81,7 @@ That coroutine represents the function's body or logic. A coroutine has to be ex
 for asynchronous behavior!
 
 Coroutines and coroutine functions were built into the Python language by
-building on top of the scaffoling of generators and generator functions.
+building on top of the scaffolding of generators and generator functions.
 Recall, a generator function is a function that yields, like this
 one:
 
