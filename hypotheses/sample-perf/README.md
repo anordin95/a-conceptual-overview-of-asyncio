@@ -8,7 +8,7 @@ The program runs those 3 coroutines 10,000 times and measures the elapesd time.
 Files named `task-...` do the same thing, but with tasks instead of coroutines.
 
 `coro-perf-1-seq.py` and `task-perf-1-seq.py` are unique. 
-Instead of awaiting nested tasks, it awaits depth-one tasks repeatedly or sequentially.
+Instead of awaiting nested tasks, it awaits depth-one coroutines (or tasks) repeatedly.
 This allows us to compare the performance of nested awaits and depth-one awaits.
 
 To serve as a reference, there's also a script `no-async.py` which performs the same logic with no usage of asyncio nor coroutines.
