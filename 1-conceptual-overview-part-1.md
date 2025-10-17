@@ -293,16 +293,19 @@ internal processing logic that's responsible for the slowdown.
 Granted, for larger, more realistic programs that likely have much deeper call stacks, that 
 answer may change. 
 
-You can play around with the programs in `hypotheses/9-await-perf-coro.py` and
+I made two brief programs to explore this idea, available in `hypotheses/9-await-perf-coro.py` and
 `hypotheses/10-await-perf-task.py`.
-And the scaling tests in `hypotheses/sample-perf` which gave the insight regarding the relative importance of the call stack traversal
-versus event loop processing.
-The two aforementioned programs measure the performance of each approach many, many times. The programs recursively await a coroutine or task to a depth of 10.
+Those two programs measure the performance of each approach (coroutines versus tasks) many, many times. 
+They recursively await a coroutine or task to a depth of 10.
 That means the average callstack depth is 5, which is arguably shallower than most real programs.
 The `await task` approach takes 3 seconds for 10,000 runs or 300 microseconds per run.
 In contrast, the `await coroutine` approach takes 0.7 microseconds per run; 430 times faster.
 I know these numbers all sound miniscule to us humans, but to computers they're significant!
 This [page of common latency numbers](https://gist.github.com/jboner/2841832) for a computer is a helpful reference point.
+
+(If you're curious to see more, check out the 
+[more thorough scaling tests and writeup](https://github.com/anordin95/a-conceptual-overview-of-asyncio/blob/main/hypotheses/performance-testing/README.md) which gave the insight regarding the relative importance of the call stack traversal
+versus event loop processing.)
 
 ## Event Loop Callbacks
 
