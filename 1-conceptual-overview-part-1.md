@@ -61,7 +61,7 @@ keyword before the "def".
 ```python
 async def special_fella(magic_number: int):
     print(
-        "I am a super special function. Far cooler than that printer. By the way, 
+        "I am a super special function. Far cooler than that printer. By the way, "
         f"my lucky number is: {magic_number}."
     )
 ```
@@ -215,7 +215,7 @@ in this case, a call to resume `plant_a_tree()`.
 
 Generally speaking, when the awaited task finishes (`dig_the_hole_task`),
 the original task or coroutine (`plant_a_tree()`) is added back to the event
-loops to-do list to be resumed.
+loop's to-do list to be resumed.
 
 This is a basic, yet reliable mental model.
 In practice, the control handoffs are slightly more involved, but not by much.
@@ -287,7 +287,7 @@ execution for 100ms or longer.
 I believe this design of `await` intentionally trades off some conceptual clarity around usage for 
 improved performance.
 Each time a task is awaited, control needs to be passed all the way up the call stack to the event loop. 
-The event loop then needs to work through it's own logic to eventually invoke the task.
+The event loop then needs to work through its own logic to eventually invoke the task.
 The call stack has a non-negligible impact but from my experiments it's largely the event loop's 
 internal processing logic that's responsible for the slowdown.
 Granted, for larger, more realistic programs that likely have much deeper call stacks, that 
@@ -297,7 +297,7 @@ I made two brief programs to explore this idea, available in `hypotheses/9-await
 `hypotheses/10-await-perf-task.py`.
 Those two programs measure the performance of each approach (coroutines versus tasks) many, many times. 
 They recursively await a coroutine or task to a depth of 10.
-That means the average callstack depth is 5, which is arguably shallower than most real programs.
+That means the average call stack depth is 5, which is arguably shallower than most real programs.
 The `await task` approach takes 3 seconds for 10,000 runs or 300 microseconds per run.
 In contrast, the `await coroutine` approach takes 0.7 microseconds per run; 430 times faster.
 I know these numbers all sound miniscule to us humans, but to computers they're significant!
