@@ -13,7 +13,7 @@ The actual method that invokes a Tasks coroutine: `asyncio.tasks.Task.__step_run
 6          except StopIteration as e:
 7              super().set_result(e.value)
 8          else:
-9             awaited_task.add_done_callback(self.__step)
+9              awaited_task.add_done_callback(self.step)
 10         ...
 ```
 
