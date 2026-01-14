@@ -7,6 +7,12 @@ class YieldToEventLoop:
     def __await__(self):
         yield
 
+def print_time(phrase: str):
+    print(
+        f"{phrase} at time: "
+        f"{datetime.datetime.now().strftime("%H:%M:%S")}."
+    )
+
 async def _sleep_watcher(future: asyncio.Future, time_to_wake: float):
     while True:
         if time.time() >= time_to_wake:
@@ -34,8 +40,8 @@ async def main():
     # asynchronously sleeping.
     asyncio.Task(other_work()), asyncio.Task(other_work()), asyncio.Task(other_work())
 
-    print(f"Beginning asynchronous sleep at time: {datetime.datetime.now().strftime('%H:%M:%S')}.")
-    await asyncio.Task(async_sleep(3))
-    print(f"Done asynchronous sleep at time: {datetime.datetime.now().strftime('%H:%M:%S')}.")
+    print_time("Beginning asynchronous sleep")
+    await async_sleep(3)
+    print_time("Done asynchronous sleep")
 
 asyncio.run(main())

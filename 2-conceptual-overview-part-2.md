@@ -63,7 +63,7 @@ The term is a nod to the idea of something still to come or not yet happened, an
 
 A future has a few important attributes. One is its state which can be either pending, cancelled or done. Another is its result which is set when the state transitions to done. To be clear, a Future does not represent the actual computation to be done, like a coroutine does. Instead it represents the status and result of that computation, kind of like a status-light (red, yellow or green) or indicator. 
 
-Task subclasses Future in order to gain these various capabilities. I said in the prior section tasks store a list of callbacks and I lied a bit. It's actually the Future class that implements this logic which Task inherits.
+Task subclasses Future in order to gain these various capabilities. I said in the prior section tasks store a list of callbacks and I lied a bit. It's actually the Future class that implements this logic which Task inherits. You already saw how awaiting a Task relinquishes control back to the event loop, this functionality is also inherited from asyncio.Future. In other words, awaiting a Future will also give control back to the event loop.
 
 Futures may be also used directly i.e. not via tasks. Tasks mark themselves as done when their coroutine's complete. Futures are much more versatile and will be marked as done when you say so. In this way, they're the flexible interface for you to make your own conditions for waiting and resuming. Here's an example of how you could leverage Future to create your own variant of asynchronous sleep (i.e. asyncio.sleep).
 
@@ -71,9 +71,15 @@ Futures may be also used directly i.e. not via tasks. Tasks mark themselves as d
 
 We’ll go through an example of how you could leverage a future to create your own variant of asynchronous sleep which mimics the official asyncio.sleep().
 
-This snippet registers a few tasks with the event loop and then awaits a coroutine wrapped in a task: async_sleep(3). We want that task to finish only after three seconds have elapsed, but without preventing other tasks from running.
+This snippet registers a few tasks with the event loop and then awaits the async_sleep(3) coroutine. We want that coroutine (which we’ll see shortly) to finish only after three seconds have elapsed, but without preventing other tasks from running.
 
 ```python
+def print_time(phrase: str):
+    print(
+        f"{phrase} at time: "
+        f"{datetime.datetime.now().strftime("%H:%M:%S")}."
+    )
+
 async def other_work():
     print("I like work. Work work.")
 
@@ -85,20 +91,16 @@ async def main():
         asyncio.create_task(other_work()),
         asyncio.create_task(other_work())
     ]
-    print(
-        "Beginning asynchronous sleep at time: "
-        f"{datetime.datetime.now().strftime('%H:%M:%S')}."
-    )
-    await asyncio.create_task(async_sleep(3))
-    print(
-        "Done asynchronous sleep at time: "
-        f"{datetime.datetime.now().strftime('%H:%M:%S')}."
-    )
+    
+    print_time("Beginning asynchronous sleep")
+    await async_sleep(3)
+    print_time("Done asynchronous sleep")
+
     # asyncio.gather effectively awaits each task in the collection.
     await asyncio.gather(*work_tasks)
 ```
 
-Below, we use a future to enable custom control over when that task will be marked as done. If future.set_result() (the method responsible for marking that future as done) is never called, then this task will never finish. We’ve also enlisted the help of another task, which we’ll see in a moment, that will monitor how much time has elapsed and, accordingly, call future.set_result().
+In the snippet below, showing the async_sleep coroutine functions implementation, we use a future to enable custom control over when the coroutine will finish and to cede control back to the event loop. If future.set_result() (the method responsible for marking that future as done) is never called, then this coroutine will never finish. This snippet also enlisted the help of another task, which we’ll see in a moment, that will monitor how much time has elapsed and, accordingly, call future.set_result().
 
 ```python
 async def async_sleep(seconds: float):
@@ -135,7 +137,7 @@ async def _sleep_watcher(future, time_to_wake):
 
 Let's put this in context. As usual, the event loop cycles through its tasks, giving them control and receiving control back when they pause or finish. The `watcher_task`, which runs the coroutine `_sleep_watcher(...)`, will be invoked once per full cycle of the event loop. On each resumption, it’ll check the time and if not enough has elapsed, then it’ll pause once again and hand control back to the event loop. 
 
-Eventually, enough time will have elapsed, and `_sleep_watcher(...)` will mark the future as done, and then itself finish too by breaking out of the infinite while loop. When the future is marked as done, it adds its callbacks to the event loops queue, in this case a call to resume `async_sleep()`. When `async_sleep()` resumes, there are no further instructions (the last one was `await future`), so it too finishes and adds its callbacks, one to resume `main()`, to the event loop.
+Eventually, enough time will have elapsed, and `_sleep_watcher(...)` will mark the future as done, and then itself finish too by breaking out of the infinite while loop. When the future is marked as done, it adds its callbacks to the event loops queue, in this case a call to resume `async_sleep()`. When `async_sleep()` resumes, there are no further instructions (the last one was `await future`), so it too finishes and returns to `main()`, where the program resumes.
 
 Given the helper task `watcher_task` (which is tied to the coroutine `_sleep_watcher`) is only invoked once per cycle of the event loop, you’d be correct to note that this asynchronous sleep will sleep at least three seconds, rather than exactly three seconds. Note this is also of true of asyncio.sleep.
 
@@ -160,6 +162,8 @@ async def simpler_async_sleep(seconds):
         else:
             await YieldToEventLoop()
 ```
+
+Note: These examples use busy-waiting to simplify the implementation, but this is not recommended in practice! Consider a case where there are no other tasks in the event loop, besides _sleep_watcher(). The program will constantly pause and resume this task, effectively eating up CPU resources for no good reason. To avoid this, you can put a short synchronous (not asynchronous!) sleep in the else condition.
 
 ## `await`-ing Tasks & Futures
 
